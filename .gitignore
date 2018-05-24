@@ -1,3 +1,5 @@
 heat
 *.o
 *.ppm
+build/
+job.out
