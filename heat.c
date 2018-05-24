@@ -7,6 +7,19 @@
 #include "mmintrin.h"
 #include <papi.h>
 
+#ifdef LIKWID_PERFMON
+#include <likwid.h>
+#else
+#define LIKWID_MARKER_INIT
+#define LIKWID_MARKER_THREADINIT
+#define LIKWID_MARKER_SWITCH
+#define LIKWID_MARKER_REGISTER(regionTag)
+#define LIKWID_MARKER_START(regionTag)
+#define LIKWID_MARKER_STOP(regionTag)
+#define LIKWID_MARKER_CLOSE
+#define LIKWID_MARKER_GET(regionTag, nevents, events, time, count)
+#endif
+
 double* time;
 
 double gettime() {
@@ -18,6 +31,13 @@ void usage(char *s) {
 }
 
 int main(int argc, char *argv[]) {
+    
+    LIKWID_MARKER_INIT;
+#pragma omp parallel
+{
+    LIKWID_MARKER_THREADINIT;
+}
+    
 	int i, j, k, ret;
 	FILE *infile, *resfile;
 	char *resfilename;
@@ -92,9 +112,11 @@ int main(int argc, char *argv[]) {
 
 		t0 = gettime();
 
+                LIKWID_MARKER_START("foo");
 		for (iter = 0; iter < param.maxiter; iter++) {
 			residual = relax_jacobi(&(param.u), &(param.uhelp), np, np);
 		}
+                LIKWID_MARKER_STOP("foo");
 
 		t1 = gettime();
 		time[exp_number] = wtime() - time[exp_number];
@@ -117,5 +139,6 @@ int main(int argc, char *argv[]) {
 	write_image(resfile, param.uvis, param.visres + 2, param.visres + 2);
 
 	finalize(&param);
+        LIKWID_MARKER_CLOSE;
 	return 0;
 }

@@ -1,5 +1,5 @@
 CC =  icc
-CFLAGS = -O3 -xhost $(PAPI_INC) 
+CFLAGS = -O3 -xhost $(PAPI_INC) -fopenmp -DLIKWID_PERFMON ${LIKWID_LIB} ${LIKWID_INC} 
 
 MPICC = mpicc
 
