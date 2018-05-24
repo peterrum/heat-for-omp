@@ -1,5 +1,5 @@
-5      # iterations
-200    # initial resolution
+50      # iterations
+5000   # initial resolution
 5200   # max resolution (spatial resolution)
 1000   # resolution step size
 0      # Algorithm 0=Jacobi 1=Gauss 
